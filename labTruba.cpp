@@ -62,6 +62,18 @@ void inputPipe(Pipe &p) {
     p.RepairWorks = false;
 }
 
+void showPipe(Pipe &p) {
+    cout << "\nPipe: \n";
+    cout << "Mark: " << p.kmZnach <<endl;
+    cout << "Lenght: " << p.ProtKm << "km\n";
+    cout << "Diameter: " << p.diameterMm << "mm\n";
+    if (p.RepairWorks) {
+        cout << "Repair works: active\n";
+    } else {
+        cout << "Repair works: do not need\n";
+    }
+}
+
 int main() {
     Pipe truba;
     Station station;
