@@ -103,7 +103,7 @@ int main() {
     Pipe truba;
     Station station;
     bool pipeCreated = false;
-    bool stationCreatied = false;
+    bool stationCreated = false;
 
     while (true) {
         cout << "\n____MENU____\n";
@@ -111,7 +111,7 @@ int main() {
         cout << "2. add station\n";
         cout << "3. show all\n";
         cout << "4. Toggle pipe repair\n";
-        cout << "5. Start/stop nasos\n";
+        cout << "5. Start/stop ships/start rw in them\n";
         cout << "6. save\n";
         cout << "7. load\n";
         cout << "8. exit\n";
@@ -126,14 +126,77 @@ int main() {
             inputPipe(truba);
             pipeCreated = true;
         }
+        else if (choice == 2) {
+            inputStation(station);
+            stationCreated = true;
+        }
         else if (choice == 3) {
             if (!pipeCreated) {
                 cout << "Create something at first\n";
             } else {
                 if (pipeCreated) showPipe(truba);
-                if (stationCreatied) showStation(station);
+                if (stationCreated) showStation(station);
             }
         }
+        else if (choice == 4) {
+            if (!pipeCreated) {
+                cout << "Create pipe at first\n";
+            } else {
+                truba.RepairWorks = !truba.RepairWorks;
+                cout << "Status changed\n";
+            }
+        }
+        
+        else if (choice == 5) {
+            if (!stationCreated) {
+                cout << "Create station at first\n";
+            } else {
+                cout << "1. Start shops\n2. Stop Shops\n3. Start rw on some shops\n Choice: ";
+                int vibor = getInt();
+                if (vibor ==1) {
+                    if (station.activeNasos < station.totalNasos) {
+                        cout << "How much of shops you want activate? ";
+                        station.activeNasos=getInt();
+                        while (station.activeNasos > (station.totalNasos - station.totalRepairWorksNasos)) {
+                            cout << "you dont have enought free shops\n";
+                            station.activeNasos = getInt();
+                        }
+                    } else {
+                        cout << "All shops are in work";
+                    }
+                }
+                else if (vibor ==2) {
+                    if (station.activeNasos>0) {
+                        cout << "How much of shops you want disactivate? ";
+                        station.activeNasos=station.activeNasos - getInt();
+                        while (station.activeNasos<0) {
+                            cout << "you dont have enought working shops\n";
+                            station.activeNasos = station.activeNasos - getInt();
+                        } 
+                        
+                    } else {
+                            cout << "There is no active shops";
+                    }
+                }
+                else if (vibor ==3) {
+                    cout << "Warning! You cant start rw on active shops, remember this";
+                    if (station.totalNasos ==(station.activeNasos +station.totalRepairWorksNasos)) {
+                        cout << "There are no free shops";
+                    } else {
+                        cout << "In how many shops you want to turn in rw? ";
+                        station.totalRepairWorksNasos = getInt();
+                        while (station.totalRepairWorksNasos > (station.totalNasos-station.activeNasos)) {
+                            cout << "you dont have enought free shops";
+                            station.totalRepairWorksNasos = getInt();
+                        }
+                    }
+                }
+                else {
+                    cout << "wrong command";
+                }
+            }
+        }
+        
         else {
             cout << "wrong option\n";
         }
