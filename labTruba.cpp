@@ -229,7 +229,14 @@ int main() {
                 }
             }
         }
-
+        else if (choice == 6) {
+            saveFile(truba, station);
+        }
+        else if (choice == 7) {
+            loadFile(truba, station);
+            pipeCreated = true;
+            stationCreated = true;
+        }
         else {
             cout << "wrong option\n";
         }
