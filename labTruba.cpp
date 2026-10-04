@@ -54,7 +54,12 @@ void inputPipe(Pipe &p) {
 
     cout << "Enter diameter (milimeters)--> ";
     p.diameterMm=getInt();
-    
+    while (p.diameterMm <= 0) {
+        cout << "Must be >0 --> ";
+        p.diameterMm = getInt();
+    }
+
+    p.RepairWorks = false;
 }
 
 int main() {
