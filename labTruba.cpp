@@ -99,6 +99,39 @@ void showPipe(Pipe &p) {
     }
 }
 
+void saveFile(Pipe &p, Station &s) {
+    ofstream f("data.txt");
+    f << p.kmZnach << endl;
+    f << p.ProtKm << endl;
+    f << p.diameterMm << endl;
+    f << p.RepairWorks << endl;
+    f << s.name << endl;
+    f << s.totalNasos << endl;
+    f << s.activeNasos << endl;
+    f << s.totalRepairWorksNasos << endl;
+    f.close();
+    cout << "Saved to data.txt";
+}
+
+void loadFile(Pipe &p, Station &s) {
+    ifstream f("data.txt");
+    if (!f.is_open()) {
+        cout << "File not found\n";
+        return;
+    }
+    getline(f, p.kmZnach);
+    f >> p.ProtKm;
+    f >> p.diameterMm;
+    f >> p.RepairWorks;
+    f.ignore(1000, '\n');
+    getline(f, s.name);
+    f >> s.totalNasos;
+    f >> s.activeNasos;
+    f >> s.totalRepairWorksNasos;
+    f.close();
+    cout << "Loaded from data.txt\n";
+}
+
 int main() {
     Pipe truba;
     Station station;
@@ -196,7 +229,7 @@ int main() {
                 }
             }
         }
-        
+
         else {
             cout << "wrong option\n";
         }
