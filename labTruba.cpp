@@ -32,6 +32,31 @@ int getInt() {
     return x;
 }
 
+double getDouble() {
+    double x;
+    while (!(cin >> x)) {
+        cout << "wrong input";
+        fixInput();
+    }
+    fixInput();
+    return x;
+}
+
+void inputPipe(Pipe &p) {
+    cout << "Enter km pipe of your pipe--> ";
+    getline(cin, p.kmZnach);
+    cout << "Enter lenght(kilometers)--> ";
+    p.ProtKm = getDouble();
+    while (p.ProtKm <=0) {
+        cout << "Must be >0 ";
+        p.ProtKm = getDouble();
+    }
+
+    cout << "Enter diameter (milimeters)--> ";
+    p.diameterMm=getInt();
+    
+}
+
 int main() {
     Pipe truba;
     Station station;
@@ -51,6 +76,15 @@ int main() {
         cout << "Choice--> ";
     
         int choice = getInt();
+        if (choice == 8) {
+            cout << "Bye\n";
+            break;
+        }
+        else {
+            cout << "wrong option\n";
+        }
 
     }
+
+    return 0;
 }
