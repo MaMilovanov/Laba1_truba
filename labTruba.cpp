@@ -97,10 +97,21 @@ int main() {
             cout << "Bye\n";
             break;
         }
+        else if (choice == 1) {
+            inputPipe(truba);
+            pipeCreated = true;
+        }
+        else if (choice == 3) {
+            if (!pipeCreated) {
+                cout << "Create something at first\n";
+            } else {
+                if (pipeCreated) showPipe(truba);
+                if (stationCreatied) showStation(station);
+            }
+        }
         else {
             cout << "wrong option\n";
         }
-
     }
 
     return 0;
