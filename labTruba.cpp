@@ -62,6 +62,31 @@ void inputPipe(Pipe &p) {
     p.RepairWorks = false;
 }
 
+void inputStation(Station &s){
+    cout << "Enter name of your station";
+    getline(cin, s.name);
+    cout << "Enter number of shops";
+    s.totalNasos = getInt();
+    while (s.totalNasos <=0) {
+        cout << "Must be >0 ";
+        s.totalNasos=getInt(); 
+    }
+    cout << "How many shops are active?";
+    s.activeNasos =getInt();
+    while (s.activeNasos > s.totalNasos) {
+        cout << "Number of active nasos can not be more then their total number";
+        s.activeNasos = getInt();
+    }
+    s.totalRepairWorksNasos = 0;
+}
+
+void showStation(Station &s) {
+    cout << "\nStation:\n";
+    cout << "Name: " << s.name <<endl;
+    cout << "Shops: " << s.activeNasos << "/" << s.totalNasos << endl;
+    cout << "N_of_repairing_shops" << s.totalRepairWorksNasos << endl;
+}
+
 void showPipe(Pipe &p) {
     cout << "\nPipe: \n";
     cout << "Mark: " << p.kmZnach <<endl;
