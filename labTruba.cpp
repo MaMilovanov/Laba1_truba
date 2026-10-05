@@ -73,8 +73,8 @@ void inputStation(Station &s){
     }
     cout << "How many shops are active?";
     s.activeNasos =getInt();
-    while (s.activeNasos > s.totalNasos) {
-        cout << "Number of active nasos can not be more then their total number";
+    while (s.activeNasos > s.totalNasos || s.activeNasos < 0) {
+        cout << "wrong number";
         s.activeNasos = getInt();
     }
     s.totalRepairWorksNasos = 0;
@@ -99,18 +99,21 @@ void showPipe(Pipe &p) {
     }
 }
 
-void saveFile(Pipe &p, Station &s) {
+void savePipeFile(Pipe &p) {
     ofstream f("data.txt");
     f << p.kmZnach << endl;
     f << p.ProtKm << endl;
     f << p.diameterMm << endl;
     f << p.RepairWorks << endl;
+    f.close();
+}
+void saveStationFile(Station &s) {
+    ofstream f("data.txt");
     f << s.name << endl;
     f << s.totalNasos << endl;
     f << s.activeNasos << endl;
     f << s.totalRepairWorksNasos << endl;
-    f.close();
-    cout << "Saved to data.txt";
+    f.close(); 
 }
 
 void loadFile(Pipe &p, Station &s) {
@@ -164,7 +167,7 @@ int main() {
             stationCreated = true;
         }
         else if (choice == 3) {
-            if (!pipeCreated) {
+            if (!stationCreated && !pipeCreated) {
                 cout << "Create something at first\n";
             } else {
                 if (pipeCreated) showPipe(truba);
@@ -230,7 +233,24 @@ int main() {
             }
         }
         else if (choice == 6) {
-            saveFile(truba, station);
+            cout << "What do you want to save? 1. Pipe 2. Station 3. All ";
+            int vopros = getInt();
+            if (vopros == 1) {
+                savePipeFile(truba);
+                cout << "Pipe information saved to data.txt";
+            }
+            else if (vopros == 2) {
+                saveStationFile(station);
+                cout << "Station information saved to data.txt";   
+            }
+            else if (vopros = 3) {
+                savePipeFile(truba);
+                saveStationFile(station);
+                cout << "All saved to data.txt";
+            } else {
+                cout << "wrong input";
+                return;
+            }
         }
         else if (choice == 7) {
             loadFile(truba, station);
