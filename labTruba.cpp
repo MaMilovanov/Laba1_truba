@@ -109,6 +109,10 @@ void savePipeFile(Pipe &p) {
 }
 void saveStationFile(Station &s) {
     ofstream f("data.txt");
+    f << "Pipe is not saved";
+    f << "0";
+    f << "0";
+    f << "0";
     f << s.name << endl;
     f << s.totalNasos << endl;
     f << s.activeNasos << endl;
