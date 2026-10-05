@@ -109,10 +109,7 @@ void savePipeFile(Pipe &p) {
 }
 void saveStationFile(Station &s) {
     ofstream f("data.txt");
-    f << "Pipe is not saved";
-    f << "0";
-    f << "0";
-    f << "0";
+    f << "Pipe is not saved\n0\n0\n0\n0";
     f << s.name << endl;
     f << s.totalNasos << endl;
     f << s.activeNasos << endl;
@@ -126,12 +123,27 @@ void loadFile(Pipe &p, Station &s) {
         cout << "File not found\n";
         return;
     }
-    getline(f, p.kmZnach);
+    string prob1="";
+    getline(f,prob1);
+    if (prob1=="Pipe is not saved") {
+        f >> prob1;
+        f >> prob1;
+        f >> prob1;
+    } else {
+        p.kmZnach = prob1;
+    }
     f >> p.ProtKm;
     f >> p.diameterMm;
     f >> p.RepairWorks;
     f.ignore(1000, '\n');
-    getline(f, s.name);
+    getline(f, prob1);
+    if (prob1=="Station is not saved") {
+        f >> prob1;
+        f >> prob1;
+        f >> prob1;
+    } else{
+        s.name = prob1;
+    }
     f >> s.totalNasos;
     f >> s.activeNasos;
     f >> s.totalRepairWorksNasos;
@@ -258,11 +270,19 @@ int main() {
                 cout << "All saved to data.txt";
             } else {
                 cout << "wrong input";
-                return;
             }
         }
         else if (choice == 7) {
             loadFile(truba, station);
+            if (truba.kmZnach=="Pipe is not saved") {
+                pipeCreated=false;
+            }
+            else if (station.name == "Station is not saved"){
+                stationCreated=false;
+            } else {
+            pipeCreated = true;
+            stationCreated = true;
+            }
             pipeCreated = true;
             stationCreated = true;
         }
