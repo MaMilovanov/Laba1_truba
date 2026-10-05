@@ -167,11 +167,13 @@ int main() {
             stationCreated = true;
         }
         else if (choice == 3) {
-            if (!stationCreated && !pipeCreated) {
-                cout << "Create something at first\n";
-            } else {
-                if (pipeCreated) showPipe(truba);
-                if (stationCreated) showStation(station);
+            if (pipeCreated) {
+                showPipe(truba);
+            } 
+            else if (stationCreated) {
+                showStation(station);
+            }else {
+                 cout << "Create something at first\n";
             }
         }
         else if (choice == 4) {
