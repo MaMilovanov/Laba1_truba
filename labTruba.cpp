@@ -105,6 +105,136 @@ void showPipe(Pipe &p) {
     }
 }
 
+void manageStation(Station &station, bool stationCreated) {
+    if (!stationCreated) {
+        cout << "Create station at first\n";
+        return;
+    }
+
+    cout << "1. Start shops\n";
+    cout << "2. Stop shops\n";
+    cout << "3. Start rw on some shops\n";
+    cout << "Choice: ";
+
+    int vibor = getInt();
+
+    switch (vibor) {
+        case 1: {
+            int freeShops = station.totalNasos
+                          - station.activeNasos
+                          - station.totalRepairWorksNasos;
+
+            if (freeShops <= 0) {
+                cout << "All shops are in work or repair\n";
+                break;
+            }
+
+            cout << "How many shops you want to activate? ";
+            int count = getInt();
+
+            while (count < 0 || count > freeShops) {
+                cout << "You don't have enough free shops\n";
+                count = getInt();
+            }
+
+            station.activeNasos += count;
+            break;
+        }
+
+        case 2: {
+            if (station.activeNasos <= 0) {
+                cout << "There are no active shops\n";
+                break;
+            }
+
+            cout << "How many shops you want to deactivate? ";
+            int count = getInt();
+
+            while (count < 0 || count > station.activeNasos) {
+                cout << "You don't have enough working shops\n";
+                count = getInt();
+            }
+
+            station.activeNasos -= count;
+            break;
+        }
+
+        case 3: {
+            int freeShops = station.totalNasos
+                          - station.activeNasos
+                          - station.totalRepairWorksNasos;
+
+            if (freeShops <= 0) {
+                cout << "There are no free shops\n";
+                break;
+            }
+
+            cout << "Warning! You can't start repair works on active shops\n";
+            cout << "In how many shops you want to turn on repair works? ";
+
+            int count = getInt();
+
+            while (count < 0 || count > freeShops) {
+                cout << "You don't have enough free shops\n";
+                count = getInt();
+            }
+
+            station.totalRepairWorksNasos += count;
+            break;
+        }
+
+        default:
+            cout << "Wrong command\n";
+            break;
+    }
+}
+
+
+void saveMenu(Pipe &truba, Station &station,
+              bool pipeCreated, bool stationCreated) {
+    cout << "What do you want to save?\n";
+    cout << "1. Pipe\n";
+    cout << "2. Station\n";
+    cout << "3. All\n";
+
+    int vopros = getInt();
+
+    switch (vopros) {
+        case 1:
+            if (pipeCreated) {
+                savePipeFile(truba);
+            } else {
+                cout << "Create pipe at first\n";
+            }
+            break;
+
+        case 2:
+            if (stationCreated) {
+                saveStationFile(station);
+            } else {
+                cout << "Create station at first\n";
+            }
+            break;
+
+        case 3:
+            if (pipeCreated && stationCreated) {
+                savePipeFile(truba);
+                saveStationFile(station);
+            } else if (pipeCreated) {
+                savePipeFile(truba);
+            } else if (stationCreated) {
+                saveStationFile(station);
+            } else {
+                cout << "Create pipe and station at first\n";
+            }
+            break;
+
+        default:
+            cout << "Wrong input\n";
+            break;
+    }
+}
+
 bool readDataFile(Pipe &p, Station &s,
                   bool &hasPipe, bool &hasStation) {
     ifstream f("data.txt");
@@ -294,125 +424,12 @@ int main() {
                 break;
 
             case 5:
-                if (!stationCreated) {
-                    cout << "Create station at first\n";
-                } else {
-                    cout << "1. Start shops\n";
-                    cout << "2. Stop shops\n";
-                    cout << "3. Start rw on some shops\n";
-                    cout << "Choice: ";
-
-                    int vibor = getInt();
-
-                    switch (vibor) {
-                        case 1:
-                            if (station.activeNasos < station.totalNasos) {
-                                cout << "How many shops you want to activate? ";
-                                int count = getInt();
-
-                                while (count < 0 ||
-                                       count > station.totalNasos
-                                               - station.activeNasos
-                                               - station.totalRepairWorksNasos) {
-                                    cout << "You don't have enough free shops\n";
-                                    count = getInt();
-                                }
-
-                                station.activeNasos += count;
-                            } else {
-                                cout << "All shops are in work\n";
-                            }
-                            break;
-
-                        case 2:
-                            if (station.activeNasos > 0) {
-                                cout << "How many shops you want to deactivate? ";
-                                int count = getInt();
-
-                                while (count < 0 || count > station.activeNasos) {
-                                    cout << "You don't have enough working shops\n";
-                                    count = getInt();
-                                }
-
-                                station.activeNasos -= count;
-                            } else {
-                                cout << "There are no active shops\n";
-                            }
-                            break;
-
-                        case 3:
-                            cout << "Warning! You can't start repair works on active shops\n";
-
-                            if (station.totalNasos ==
-                                station.activeNasos + station.totalRepairWorksNasos) {
-                                cout << "There are no free shops\n";
-                            } else {
-                                cout << "In how many shops you want to turn on repair works? ";
-                                int count = getInt();
-
-                                while (count < 0 ||
-                                       count > station.totalNasos
-                                               - station.activeNasos
-                                               - station.totalRepairWorksNasos) {
-                                    cout << "You don't have enough free shops\n";
-                                    count = getInt();
-                                }
-
-                                station.totalRepairWorksNasos += count;
-                            }
-                            break;
-
-                        default:
-                            cout << "Wrong command\n";
-                            break;
-                    }
-                }
+                manageStation(station, stationCreated);
                 break;
-
-            case 6: {
-                cout << "What do you want to save?\n";
-                cout << "1. Pipe\n";
-                cout << "2. Station\n";
-                cout << "3. All\n";
-
-                int vopros = getInt();
-
-                switch (vopros) {
-                    case 1:
-                        if (pipeCreated) {
-                            savePipeFile(truba);
-                        } else {
-                            cout << "Create pipe at first\n";
-                        }
-                        break;
-
-                    case 2:
-                        if (stationCreated) {
-                            saveStationFile(station);
-                        } else {
-                            cout << "Create station at first\n";
-                        }
-                        break;
-
-                    case 3:
-                        if (pipeCreated && stationCreated) {
-                            savePipeFile(truba);
-                            saveStationFile(station);
-                        } else if (pipeCreated) {
-                            savePipeFile(truba);
-                        } else if (stationCreated) {
-                            saveStationFile(station);
-                        } else {
-                            cout << "Create pipe and station at first\n";
-                        }
-                        break;
-
-                    default:
-                        cout << "Wrong input\n";
-                        break;
-                }
+                
+            case 6:
+                saveMenu(truba, station, pipeCreated, stationCreated);
                 break;
-            }
 
             case 7:
                 loadFile(truba, station);
