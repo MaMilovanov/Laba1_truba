@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <limits>
 
 using namespace std;
 
@@ -23,13 +24,18 @@ void fixInput() {
     cin.ignore(1000, '\n');
 }
 int getInt() {
-    int x;
-    while (!(cin >> x)) {
-        cout << "wrong input";
-        fixInput();
+    int i;
+    while(1)
+    {
+        if (cin >> i && cin.peek() == '\n' && i >= 0){
+            cin.ignore(10000,'\n');
+            return i;
+        } else {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Wrong action" << endl;
+        }
     }
-    fixInput();
-    return x;
 }
 
 double getDouble() {
@@ -42,7 +48,7 @@ double getDouble() {
     return x;
 }
 
-void inputPipe(Pipe &p) {
+void inputPipe(Pipe &p) { 
     cout << "Enter km pipe of your pipe--> ";
     getline(cin, p.kmZnach);
     cout << "Enter lenght(kilometers)--> ";
@@ -99,41 +105,138 @@ void showPipe(Pipe &p) {
     }
 }
 
-void savePipeFile(Pipe &p) {
-    ofstream f("data.txt");
-    f << p.kmZnach << endl;
-    f << p.ProtKm << endl;
-    f << p.diameterMm << endl;
-    f << p.RepairWorks << endl;
-    f.close();
+bool readDataFile(Pipe &p, Station &s,
+                  bool &hasPipe, bool &hasStation) {
+    ifstream f("data.txt");
+
+    hasPipe = false;
+    hasStation = false;
+
+    if (!f.is_open()) {
+        return false;
+    }
+
+    string section;
+
+    while (getline(f, section)) {
+        if (section == "PIPE") {
+            if (!getline(f, p.kmZnach)) {
+                return false;
+            }
+
+            if (!(f >> p.ProtKm
+                    >> p.diameterMm
+                    >> p.RepairWorks)) {
+                return false;
+            }
+
+            f.ignore(numeric_limits<streamsize>::max(), '\n');
+            hasPipe = true;
+        }
+        else if (section == "STATION") {
+            if (!getline(f, s.name)) {
+                return false;
+            }
+
+            if (!(f >> s.totalNasos
+                    >> s.activeNasos
+                    >> s.totalRepairWorksNasos)) {
+                return false;
+            }
+
+            f.ignore(numeric_limits<streamsize>::max(), '\n');
+            hasStation = true;
+        }
+        else if (!section.empty()) {
+            return false;
+        }
+    }
+
+    return !f.bad();
 }
-void saveStationFile(Station &s) {
+
+bool writeDataFile(Pipe &p, Station &s,
+                   bool hasPipe, bool hasStation) {
     ofstream f("data.txt");
-    f << "Pipe is not saved\n0\n0\n0\n0";
-    f << s.name << endl;
-    f << s.totalNasos << endl;
-    f << s.activeNasos << endl;
-    f << s.totalRepairWorksNasos << endl;
-    f.close(); 
+
+    if (!f.is_open()) {
+        cout << "Cannot open data.txt for saving\n";
+        return false;
+    }
+
+    if (hasPipe) {
+        f << "PIPE\n";
+        f << p.kmZnach << '\n';
+        f << p.ProtKm << '\n';
+        f << p.diameterMm << '\n';
+        f << p.RepairWorks << '\n';
+    }
+
+    if (hasStation) {
+        f << "STATION\n";
+        f << s.name << '\n';
+        f << s.totalNasos << '\n';
+        f << s.activeNasos << '\n';
+        f << s.totalRepairWorksNasos << '\n';
+    }
+
+    if (!f) {
+        cout << "Error while saving data\n";
+        return false;
+    }
+
+    return true;
+}
+
+void savePipeFile(Pipe &p) {
+    Pipe oldPipe{};
+    Station s{};
+    bool hasPipe = false;
+    bool hasStation = false;
+
+    readDataFile(oldPipe, s, hasPipe, hasStation);
+
+    if (writeDataFile(p, s, true, hasStation)) {
+        cout << "Pipe information saved to data.txt\n";
+    }
+}
+
+void saveStationFile(Station &s) {
+    Pipe p{};
+    Station oldStation{};
+    bool hasPipe = false;
+    bool hasStation = false;
+
+    readDataFile(p, oldStation, hasPipe, hasStation);
+
+    if (writeDataFile(p, s, hasPipe, true)) {
+        cout << "Station information saved to data.txt\n";
+    }
 }
 
 void loadFile(Pipe &p, Station &s) {
-    ifstream f("data.txt");
-    if (!f.is_open()) {
-        cout << "File not found\n";
+    bool hasPipe = false;
+    bool hasStation = false;
+
+    if (!readDataFile(p, s, hasPipe, hasStation)) {
+        cout << "File not found or data.txt contains invalid data\n";
         return;
     }
-    getline(f, p.kmZnach);
-    f >> p.ProtKm;
-    f >> p.diameterMm;
-    f >> p.RepairWorks;
-    f.ignore(1000, '\n');
-    getline(f, s.name);
-    f >> s.totalNasos;
-    f >> s.activeNasos;
-    f >> s.totalRepairWorksNasos;
-    f.close();
+
+    if (!hasPipe && !hasStation) {
+        cout << "No saved data found\n";
+        return;
+    }
+
     cout << "Loaded from data.txt\n";
+
+    if (hasPipe) {
+        cout << "Pipe data loaded\n";
+    }
+
+    if (hasStation) {
+        cout << "Station data loaded\n";
+    }
 }
 
 int main() {
